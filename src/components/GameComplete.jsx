@@ -1,7 +1,7 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
-const GameComplete = ({ score, difficulty }) => {
+const GameComplete = ({ score }) => {
   const navigate = useNavigate()
 
   return (
@@ -12,10 +12,15 @@ const GameComplete = ({ score, difficulty }) => {
         alignItems: 'center',
         gap: 4,
         padding: 6,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderRadius: 4,
-        boxShadow: 3,
         animation: 'fadeIn 0.5s ease-in',
+        backgroundImage: 'url(/assets/game_images/gameover.png)',
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minWidth: '800px',
+        minHeight: '600px',
+        position: 'relative',
         '@keyframes fadeIn': {
           '0%': {
             opacity: 0,
@@ -28,27 +33,24 @@ const GameComplete = ({ score, difficulty }) => {
         },
       }}
     >
-      <Typography 
-        variant="h2" 
-        color="primary"
-        sx={{ 
-          fontWeight: 'bold',
-          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)'
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          mt: 15,
         }}
       >
-        Game Over!
-      </Typography>
-
-      <Box sx={{ textAlign: 'center', my: 2 }}>
-        <Typography variant="h3" gutterBottom>
-          Your Score
-        </Typography>
         <Typography 
           variant="h1" 
-          color="primary"
           sx={{ 
             fontWeight: 'bold',
             animation: 'scoreReveal 1s ease-out',
+            fontSize: '3rem',
+            color: '#380f00',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
             '@keyframes scoreReveal': {
               '0%': { transform: 'scale(0)' },
               '70%': { transform: 'scale(1.1)' },
@@ -58,40 +60,47 @@ const GameComplete = ({ score, difficulty }) => {
         >
           {score}/10
         </Typography>
-        <Typography variant="h5" sx={{ mt: 2, textTransform: 'capitalize' }}>
-          {difficulty} Mode
-        </Typography>
-      </Box>
 
-      <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
-        <Button 
-          variant="contained"
-          size="large"
-          onClick={() => window.location.reload()}
+        <Box 
           sx={{ 
-            fontSize: '1.2rem', 
-            padding: '12px 32px',
-            borderRadius: '50px',
-            backgroundColor: '#4caf50',
-            '&:hover': {
-              backgroundColor: '#45a049'
-            }
+            display: 'flex', 
+            gap: 1, 
+            mt: 2, 
+            mb: 6,
+            justifyContent: 'center' 
           }}
         >
-          Play Again
-        </Button>
-        <Button 
-          variant="outlined"
-          size="large"
-          onClick={() => navigate('/')}
-          sx={{ 
-            fontSize: '1.2rem', 
-            padding: '12px 32px',
-            borderRadius: '50px',
-          }}
-        >
-          Main Menu
-        </Button>
+          <Box
+            component="img"
+            src="/assets/game_images/playagain.png"
+            alt="Play Again"
+            onClick={() => window.location.reload()}
+            sx={{
+              width: '120px',
+              height: 'auto',
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.05)'
+              }
+            }}
+          />
+          <Box
+            component="img"
+            src="/assets/game_images/menu.png"
+            alt="Main Menu"
+            onClick={() => navigate('/')}
+            sx={{
+              width: '120px',
+              height: 'auto',
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.05)'
+              }
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   )
