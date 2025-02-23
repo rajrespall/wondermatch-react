@@ -14,10 +14,34 @@ const FlipCard = ({
         width,
         height,
         perspective: '1000px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        transition: 'transform 0.3s ease',
+        '&:hover': {
+          transform: 'translateY(-10px) scale(1.05)',
+          '& .card-shadow': {
+            opacity: 0.5,
+            transform: 'translateY(10px) scale(0.95)'
+          }
+        }
       }}
       onClick={onClick}
     >
+      {/* Card shadow */}
+      <Box
+        className="card-shadow"
+        sx={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.2)',
+          borderRadius: '8px',
+          filter: 'blur(10px)',
+          transition: 'all 0.3s ease',
+          opacity: 0,
+          zIndex: -1
+        }}
+      />
+
       <Box
         sx={{
           position: 'relative',
@@ -40,6 +64,10 @@ const FlipCard = ({
             backfaceVisibility: 'hidden',
             objectFit: 'contain',
             border,
+            borderRadius: '8px',
+            backgroundColor: 'white',
+            padding: 2,
+            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
           }}
         />
         
@@ -53,6 +81,7 @@ const FlipCard = ({
             transform: 'rotateY(180deg)',
             backgroundColor: '#2196f3',
             borderRadius: '8px',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
           }}
         />
       </Box>
