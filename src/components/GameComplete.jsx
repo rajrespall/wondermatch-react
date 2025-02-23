@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
-const GameComplete = ({ score }) => {
+const GameComplete = ({ score, difficulty }) => {
   const navigate = useNavigate()
 
   return (

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Box, Button, Container, Typography, IconButton, ButtonGroup } from '@mui/material'
+import { Box, Container, IconButton } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 import Settings from './Settings'
 

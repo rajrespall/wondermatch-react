@@ -204,7 +204,7 @@ const GamePage = () => {
             </Grid>
           </>
         ) : (
-          <GameComplete score={score} />
+          <GameComplete score={score} difficulty={difficulty} />
         )}
       </Box>
     </Container>
