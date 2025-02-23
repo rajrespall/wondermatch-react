@@ -58,6 +58,9 @@ const GameComplete = ({ score }) => {
         >
           {score}/10
         </Typography>
+        <Typography variant="h5" sx={{ mt: 2, textTransform: 'capitalize' }}>
+          {difficulty} Mode
+        </Typography>
       </Box>
 
       <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>

@@ -6,8 +6,11 @@ import { useSettings } from '../context/SettingsContext'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
 import FlipCard from './FlipCard'
 import GameComplete from './GameComplete'
+import { useLocation } from 'react-router-dom'
 
 const GamePage = () => {
+  const location = useLocation()
+  const difficulty = location.state?.difficulty || 'easy'
   const [selectedAnimals, setSelectedAnimals] = useState([])
   const [correctAnimal, setCorrectAnimal] = useState(null)
   const [audio, setAudio] = useState(null)
@@ -21,6 +24,15 @@ const GamePage = () => {
 
   const successSound = '/assets/sound_effects/correct_ans.mp3'
   const failureSound = '/assets/sound_effects/wrong_ans.mp3'
+
+  const getCardCount = () => {
+    switch(difficulty) {
+      case 'medium': return 6
+      case 'hard': return 8
+      default: return 3
+    }
+  }
+  const cardCount = getCardCount()
 
   const playFeedbackSound = (isCorrect) => {
     if (settings.soundEffects) {
@@ -50,10 +62,10 @@ const GamePage = () => {
       }
 
       const shuffled = [...animals].sort(() => 0.5 - Math.random())
-      const selected = shuffled.slice(0, 3)
+      const selected = shuffled.slice(0, cardCount)
       setSelectedAnimals(selected)
       
-      const randomIndex = Math.floor(Math.random() * 3)
+      const randomIndex = Math.floor(Math.random() * cardCount)
       const selectedAnimal = selected[randomIndex]
       setCorrectAnimal(selectedAnimal)
     
@@ -68,7 +80,7 @@ const GamePage = () => {
         setIsFlipping(false)
       }, 600)
     }, 600)
-  }, [audio, round])
+  }, [audio, round, cardCount])
 
   useEffect(() => {
     if (correctAnimal && settings.soundEffects && !isFlipping) {
@@ -142,6 +154,9 @@ const GamePage = () => {
               <Typography variant="subtitle1">
                 Round: {round}/10
               </Typography>
+              <Typography variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
+                {difficulty} Mode
+              </Typography>
             </Box>
             <Box sx={{ 
               display: 'flex', 
@@ -158,7 +173,13 @@ const GamePage = () => {
 
             <Grid container spacing={3} justifyContent="center">
               {selectedAnimals.map((animal) => (
-                <Grid item xs={6} sm={3} key={animal.name}>
+                <Grid 
+                  item 
+                  xs={12} 
+                  sm={6} 
+                  md={difficulty === 'hard' ? 3 : 4}
+                  key={animal.name}
+                >
                   <FlipCard
                     image={animal.image}
                     isFlipped={isFlipping}
@@ -167,6 +188,8 @@ const GamePage = () => {
                       `4px solid ${isCorrect ? '#4caf50' : '#f44336'}` : 
                       'none'
                     }
+                    width={difficulty === 'hard' ? '150px' : '200px'}
+                    height={difficulty === 'hard' ? '200px' : '250px'}
                   />
                 </Grid>
               ))}
