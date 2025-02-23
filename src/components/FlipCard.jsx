@@ -73,14 +73,17 @@ const FlipCard = ({
         
         {/* Back of card */}
         <Box
+          component="img"
+          src="/assets/game_images/backcard.png"
+          alt="card back"
           sx={{
             position: 'absolute',
             width: '100%',
             height: '100%',
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
-            backgroundColor: '#2196f3',
             borderRadius: '8px',
+            objectFit: 'contain',
             boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
           }}
         />

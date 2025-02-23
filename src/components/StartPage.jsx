@@ -17,7 +17,14 @@ const StartPage = () => {
   }
 
   return (
-    <Box sx={{ position: 'relative', minHeight: '100vh' }}>
+    <Box sx={{ 
+      position: 'relative', 
+      minHeight: '100vh',
+      backgroundImage: 'url(/assets/game_images/wondermatchbg.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat' 
+    }}>
       <IconButton
         aria-label="settings"
         onClick={handleOpenSettings}
@@ -48,7 +55,7 @@ const StartPage = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 4
+            gap: 2
           }}
         >
           <Box
@@ -56,10 +63,10 @@ const StartPage = () => {
             src='/assets/game_images/wondermatch.png'
             alt="Wonder Match"
             sx={{
-              width: '100%',
-              maxWidth: '700px',
+              width: '200%',
+              maxWidth: '1200px',
               height: 'auto',
-              marginBottom: 2
+              marginBottom: -10
             }}
           />
           

@@ -129,6 +129,14 @@ const GamePage = () => {
   }
 
   return (
+    <Box sx={{
+      position: 'relative',
+      minHeight: '100vh',
+      backgroundImage: 'url(/assets/game_images/matchgamebg.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }}>
     <Container maxWidth="md">
       <Box sx={{ 
         minHeight: '100vh',
@@ -163,7 +171,7 @@ const GamePage = () => {
               alignItems: 'center', 
               gap: 2 
             }}>
-              <Typography variant="h4">
+              <Typography variant="h4" color='white'>
                 Select the correct animal
               </Typography>
               <IconButton onClick={playSound}>
@@ -200,6 +208,7 @@ const GamePage = () => {
         )}
       </Box>
     </Container>
+    </Box>
   )
 }
 
