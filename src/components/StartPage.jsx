@@ -16,6 +16,13 @@ const StartPage = () => {
     navigate('/game', { state: { difficulty } })
   }
 
+  const getDifficultyImage = (level) => {
+    if (difficulty === level) {
+      return `/assets/game_images/${level}green.png`
+    }
+    return `/assets/game_images/${level}blue.png`
+  }
+
   return (
     <Box sx={{ 
       position: 'relative', 
@@ -66,40 +73,54 @@ const StartPage = () => {
               width: '200%',
               maxWidth: '1200px',
               height: 'auto',
-              marginBottom: -10
+              marginBottom: 0,
+              marginTop: -15
             }}
           />
           
-          <ButtonGroup variant="contained" size="large">
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 2, 
+            justifyContent: 'center',
+            mb: 2,
+            mt: -15
+          }}>
             {['easy', 'medium', 'hard'].map((level) => (
-              <Button
+              <Box
                 key={level}
+                component="img"
+                src={getDifficultyImage(level)}
+                alt={`${level} difficulty`}
                 onClick={() => setDifficulty(level)}
-                sx={{ 
-                  px: 4,
-                  backgroundColor: difficulty === level ? '#4caf50' : 'primary.main',
+                sx={{
+                  width: '150px',
+                  height: 'auto',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s',
                   '&:hover': {
-                    backgroundColor: difficulty === level ? '#45a049' : 'primary.dark'
+                    transform: 'scale(1.05)'
                   }
                 }}
-              >
-                {level.charAt(0).toUpperCase() + level.slice(1)}
-              </Button>
+              />
             ))}
-          </ButtonGroup>
+          </Box>
 
-          <Button
-            variant="contained"
-            size="large"
+          <Box
+            component="img"
+            src="/assets/game_images/startgame.png"
+            alt="Start Game"
             onClick={handleStartGame}
-            sx={{ 
-              fontSize: '1.2rem', 
-              padding: '12px 32px',
-              borderRadius: '50px' 
+            sx={{
+              width: '200px',
+              height: 'auto',
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.05)'
+              }
             }}
-          >
-            Start Game
-          </Button>
+          />
+          
         </Box>
       </Container>
     </Box>
