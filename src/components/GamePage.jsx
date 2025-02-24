@@ -1,132 +1,147 @@
-import { useState, useEffect, useCallback } from 'react'
-import { Box, Container, Grid, Typography, IconButton, Button } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-import { animals } from '../constants/animals'
-import { useSettings } from '../context/SettingsContext'
-import VolumeUpIcon from '@mui/icons-material/VolumeUp'
-import FlipCard from './FlipCard'
-import GameComplete from './GameComplete'
-import { useLocation } from 'react-router-dom'
+import { useEffect, useCallback } from 'react';
+import { Box, Container, Grid, Typography, IconButton } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { animals } from '../constants/animals';
+import { useSettings } from '../context/SettingsContext';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import FlipCard from './FlipCard';
+import GameComplete from './GameComplete';
+import useGameStore from '../../store/gameStore';
+import axios from 'axios';
 
 const GamePage = () => {
-  const location = useLocation()
-  const difficulty = location.state?.difficulty || 'easy'
-  const [selectedAnimals, setSelectedAnimals] = useState([])
-  const [correctAnimal, setCorrectAnimal] = useState(null)
-  const [audio, setAudio] = useState(null)
-  const [score, setScore] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState(null)
-  const [isCorrect, setIsCorrect] = useState(null)
-  const { settings } = useSettings()
-  const [isFlipping, setIsFlipping] = useState(false)
-  const [round, setRound] = useState(1)
-  const navigate = useNavigate()
+  const location = useLocation();
+  const difficulty = location.state?.difficulty || 'easy';
+  const { settings } = useSettings();
+  const navigate = useNavigate();
 
-  const successSound = '/assets/sound_effects/correct_ans.mp3'
-  const failureSound = '/assets/sound_effects/wrong_ans.mp3'
+  const {
+    score,
+    round,
+    selectedAnswer,
+    isCorrect,
+    isFlipping,
+    selectedAnimals,
+    correctAnimal,
+    audio,
+    setScore,
+    incrementScore,
+    setRound,
+    incrementRound,
+    startTimer,
+    endTimer,
+    setSelectedAnswer,
+    setIsCorrect,
+    setIsFlipping,
+    setSelectedAnimals,
+    setCorrectAnimal,
+    setAudio,
+    resetGame,
+    addMatch,
+  } = useGameStore();
+
+  const successSound = '/assets/sound_effects/correct_ans.mp3';
+  const failureSound = '/assets/sound_effects/wrong_ans.mp3';
 
   const getCardCount = () => {
     switch(difficulty) {
-      case 'medium': return 6
-      case 'hard': return 8
-      default: return 3
+      case 'medium': return 6;
+      case 'hard': return 8;
+      default: return 3;
     }
-  }
-  const cardCount = getCardCount()
+  };
+  const cardCount = getCardCount();
 
   const playFeedbackSound = (isCorrect) => {
     if (settings.soundEffects) {
-      const feedbackAudio = new Audio(isCorrect ? successSound : failureSound)
-      feedbackAudio.play().catch(console.error)
+      const feedbackAudio = new Audio(isCorrect ? successSound : failureSound);
+      feedbackAudio.play().catch(console.error);
     }
-  }
+  };
 
   const playSound = useCallback(() => {
     if (correctAnimal && settings.soundEffects && audio) {
-      audio.currentTime = 0
+      audio.currentTime = 0;
       audio.play().catch(error => {
-        console.log('Audio playback failed:', error)
-      })
+        console.log('Audio playback failed:', error);
+      });
     }
-  }, [correctAnimal, settings.soundEffects, audio])
+  }, [correctAnimal, settings.soundEffects, audio]);
 
   const loadNewAnimals = useCallback(() => {
-    if (round >= 10) return
+    if (round >= 10) return;
 
-    setIsFlipping(true)
-    
+    setIsFlipping(true);
+
     setTimeout(() => {
       if (audio) {
-        audio.pause()
-        audio.currentTime = 0
+        audio.pause();
+        audio.currentTime = 0;
       }
 
-      const shuffled = [...animals].sort(() => 0.5 - Math.random())
-      const selected = shuffled.slice(0, cardCount)
-      setSelectedAnimals(selected)
-      
-      const randomIndex = Math.floor(Math.random() * cardCount)
-      const selectedAnimal = selected[randomIndex]
-      setCorrectAnimal(selectedAnimal)
-    
-      const newAudio = new Audio(selectedAnimal.audio)
-      setAudio(newAudio)
+      const shuffled = [...animals].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, cardCount);
+      setSelectedAnimals(selected);
 
-      setSelectedAnswer(null)
-      setIsCorrect(null)
-      
-      // Remove audio play from here
+      const randomIndex = Math.floor(Math.random() * cardCount);
+      const selectedAnimal = selected[randomIndex];
+      setCorrectAnimal(selectedAnimal);
+
+      const newAudio = new Audio(selectedAnimal.audio);
+      setAudio(newAudio);
+
+      setSelectedAnswer(null);
+      setIsCorrect(null);
+
       setTimeout(() => {
-        setIsFlipping(false)
-      }, 600)
-    }, 600)
-  }, [audio, round, cardCount])
+        setIsFlipping(false);
+      }, 600);
+    }, 600);
+  }, [audio, round, cardCount]);
 
   useEffect(() => {
-    if (correctAnimal && settings.soundEffects && !isFlipping) {
-      const timeoutId = setTimeout(() => {
-        audio?.play().catch(console.error)
-      }, 1200) // Wait for flip animation to complete
-
-      return () => clearTimeout(timeoutId)
-    }
-  }, [correctAnimal, settings.soundEffects, isFlipping, audio])
-  
-  useEffect(() => {
-    loadNewAnimals()
+    resetGame();
+    startTimer();
+    loadNewAnimals();
     return () => {
       if (audio) {
-        audio.pause()
-        audio.currentTime = 0
+        audio.pause();
+        audio.currentTime = 0;
       }
-    }
-  }, [])
+    };
+  }, []);
 
   const handleAnimalClick = async (animal) => {
-    if (selectedAnswer) return
+    if (selectedAnswer) return;
 
-    setSelectedAnswer(animal.name)
-    const correct = animal.name === correctAnimal.name
-    setIsCorrect(correct)
+    setSelectedAnswer(animal.name);
+    const correct = animal.name === correctAnimal.name;
+    setIsCorrect(correct);
 
-    playFeedbackSound(correct)
+    playFeedbackSound(correct);
 
     if (correct) {
-      setScore(prevScore => prevScore + 1)
+      incrementScore();
     }
 
     if (round === 10) {
+      endTimer();
       setTimeout(() => {
-        setRound(11)
-      }, 1500)
-      return
+        setRound(11);
+        addMatch({
+          score,
+          difficulty,
+          timeSpent: useGameStore.getState().time,
+        });
+      }, 1500);
+      return;
     }
 
     setTimeout(() => {
-      setRound(prevRound => prevRound + 1)
-      loadNewAnimals()
-    }, 1500)
-  }
+      incrementRound();
+      loadNewAnimals();
+    }, 1500);
+  };
 
   return (
     <Box sx={{
@@ -209,7 +224,7 @@ const GamePage = () => {
       </Box>
     </Container>
     </Box>
-  )
-}
+  );
+};
 
-export default GamePage
+export default GamePage;
