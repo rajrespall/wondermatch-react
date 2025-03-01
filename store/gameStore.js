@@ -58,6 +58,7 @@ const useGameStore = create((set, get) => ({
             'Content-Type': 'application/json'
           }
         });
+      console.log('Match added:', response);
       set((state) => ({ matches: [...state.matches, response.data] }));
     } catch (error) {
       console.error('Failed to add match:', error);

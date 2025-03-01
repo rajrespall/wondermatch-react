@@ -93,7 +93,7 @@ const StartPage = () => {
                 alt={`${level} difficulty`}
                 onClick={() => setDifficulty(level)}
                 sx={{
-                  width: '150px',
+                  width: '200px',
                   height: 'auto',
                   cursor: 'pointer',
                   transition: 'transform 0.2s',

@@ -1,5 +1,5 @@
-import { useEffect, useCallback } from 'react';
-import { Box, Container, Grid, Typography, IconButton } from '@mui/material';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Box, Container, Grid, Typography, IconButton, Snackbar, Alert } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { animals } from '../constants/animals';
 import { useSettings } from '../context/SettingsContext';
@@ -14,6 +14,7 @@ const GamePage = () => {
   const difficulty = location.state?.difficulty || 'easy';
   const { settings } = useSettings();
   const navigate = useNavigate();
+  const [showPlayPrompt, setShowPlayPrompt] = useState(false);
 
   const {
     score,
@@ -64,9 +65,20 @@ const GamePage = () => {
       audio.currentTime = 0;
       audio.play().catch(error => {
         console.log('Audio playback failed:', error);
+        setShowPlayPrompt(true);
       });
     }
   }, [correctAnimal, settings.soundEffects, audio]);
+
+  // Attempt to autoplay audio when a new round starts
+  useEffect(() => {
+    if (correctAnimal && settings.soundEffects && audio && !isFlipping) {
+      // Short delay to ensure audio is ready
+      setTimeout(() => {
+        playSound();
+      }, 1000);
+    }
+  }, [correctAnimal, isFlipping]);
 
   const loadNewAnimals = useCallback(() => {
     if (round >= 10) return;
@@ -88,6 +100,8 @@ const GamePage = () => {
       setCorrectAnimal(selectedAnimal);
 
       const newAudio = new Audio(selectedAnimal.audio);
+      // Preload audio
+      newAudio.load();
       setAudio(newAudio);
 
       setSelectedAnswer(null);
@@ -118,11 +132,11 @@ const GamePage = () => {
     const correct = animal.name === correctAnimal.name;
     setIsCorrect(correct);
 
-    playFeedbackSound(correct);
-
     if (correct) {
       incrementScore();
     }
+
+    playFeedbackSound(correct);
 
     if (round === 10) {
       endTimer();
@@ -223,6 +237,16 @@ const GamePage = () => {
         )}
       </Box>
     </Container>
+    <Snackbar 
+      open={showPlayPrompt} 
+      autoHideDuration={6000} 
+      onClose={() => setShowPlayPrompt(false)}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+    >
+      <Alert severity="info" onClose={() => setShowPlayPrompt(false)}>
+        Click the sound button to hear the animal sound
+      </Alert>
+    </Snackbar>
     </Box>
   );
 };
